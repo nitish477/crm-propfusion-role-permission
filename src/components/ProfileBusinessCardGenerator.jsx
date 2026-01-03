@@ -4,6 +4,8 @@ import { getStaff } from "../services/apiStaff";
 import { fetchCurrentLoggedInUserAllData } from "../services/apiAllData";
 import BusinessCard from "./BusinessCard";
 import BusinessCardPDFDocument from "./BusinessCardPDFDocument";
+import NewBusinessCard from "./NewBusinessCard";
+import NewBusinessCardPDFDocument from "./NewBusinessCardPDFDocument";
 import { prepareCardDataForPDF } from "../utils/pdfUtils";
 import toast from "react-hot-toast";
 import { pdf } from "@react-pdf/renderer";
@@ -16,6 +18,7 @@ const ProfileBusinessCardGenerator = ({ currentUser, colorCode, isLuxury = false
     const [currentSide, setCurrentSide] = useState("front");
     const [isFlipping, setIsFlipping] = useState(false);
     const [isDownloading, setIsDownloading] = useState(false);
+    const [cardType, setCardType] = useState("old"); // "old" or "new"
     const cardRef = useRef();
     const frontRef = useRef();
     const backRef = useRef();
@@ -55,6 +58,7 @@ const ProfileBusinessCardGenerator = ({ currentUser, colorCode, isLuxury = false
                 company_name: safe(company?.company_name, "Your Company"),
                 company_logo_url: safe(company?.company_logo_url, ""),
                 job_type: safe(agent?.job_type, ""),
+                address: safe(company?.address, safe(agent?.address, "Hotel Seven Seas, Al-Nahada-1, Dubai")),
             };
             
             console.log("Card data prepared:", cardData);
@@ -96,16 +100,18 @@ const ProfileBusinessCardGenerator = ({ currentUser, colorCode, isLuxury = false
                 toPng(backRef.current, toPngOptions),
             ]);
 
-            // Generate PDF using captured images
+            // Generate PDF using captured images - use appropriate component based on card type
+            const PDFComponent = cardType === "new" ? NewBusinessCardPDFDocument : BusinessCardPDFDocument;
             const blob = await pdf(
-                <BusinessCardPDFDocument data={{ ...preparedData, frontImg, backImg }} />
+                <PDFComponent data={{ ...preparedData, frontImg, backImg }} />
             ).toBlob();
 
             // Create download link
             const url = URL.createObjectURL(blob);
             const link = document.createElement("a");
             link.href = url;
-            link.download = "business-card-a4.pdf";
+            const cardTypeLabel = cardType === "new" ? "modern" : "classic";
+            link.download = `business-card-${cardTypeLabel}-a4.pdf`;
             document.body.appendChild(link);
             console.log("Triggering download...");
             link.click();
@@ -130,6 +136,7 @@ const ProfileBusinessCardGenerator = ({ currentUser, colorCode, isLuxury = false
         setShowDialog(false);
         setCardData(null);
         setCurrentSide("front");
+        setCardType("old"); // Reset to old card type
     };
 
     const toggleSide = () => {
@@ -325,11 +332,75 @@ const ProfileBusinessCardGenerator = ({ currentUser, colorCode, isLuxury = false
                                     margin: 0,
                                     color: "#666",
                                     fontSize: "14px",
+                                    marginBottom: "20px",
                                 }}
                             >
                                 Preview and download your personalized business
                                 card
                             </p>
+                            
+                            {/* Card Type Selector */}
+                            <div
+                                style={{
+                                    display: "flex",
+                                    justifyContent: "center",
+                                    gap: "12px",
+                                    marginTop: "16px",
+                                }}
+                            >
+                                <button
+                                    onClick={() => setCardType("old")}
+                                    style={{
+                                        padding: "10px 20px",
+                                        borderRadius: "8px",
+                                        border: "none",
+                                        background:
+                                            cardType === "old"
+                                                ? colorCode
+                                                : "#f0f0f0",
+                                        color:
+                                            cardType === "old"
+                                                ? "#fff"
+                                                : "#666",
+                                        fontWeight: 600,
+                                        cursor: "pointer",
+                                        fontSize: "14px",
+                                        transition: "all 0.3s ease",
+                                        boxShadow:
+                                            cardType === "old"
+                                                ? "0 2px 8px rgba(0,0,0,0.2)"
+                                                : "none",
+                                    }}
+                                >
+                                    Classic Design
+                                </button>
+                                <button
+                                    onClick={() => setCardType("new")}
+                                    style={{
+                                        padding: "10px 20px",
+                                        borderRadius: "8px",
+                                        border: "none",
+                                        background:
+                                            cardType === "new"
+                                                ? colorCode
+                                                : "#f0f0f0",
+                                        color:
+                                            cardType === "new"
+                                                ? "#fff"
+                                                : "#666",
+                                        fontWeight: 600,
+                                        cursor: "pointer",
+                                        fontSize: "14px",
+                                        transition: "all 0.3s ease",
+                                        boxShadow:
+                                            cardType === "new"
+                                                ? "0 2px 8px rgba(0,0,0,0.2)"
+                                                : "none",
+                                    }}
+                                >
+                                    Modern Design
+                                </button>
+                            </div>
                         </div>
 
                         {/* Side Toggle Buttons */}
@@ -520,16 +591,31 @@ const ProfileBusinessCardGenerator = ({ currentUser, colorCode, isLuxury = false
                                     {/* Hidden offscreen mirrors for accurate image capture */}
                                     <div style={{ position: "absolute", left: -99999, top: -99999 }}>
                                         <div ref={frontRef}>
-                                            <BusinessCard data={{...cardData, themeColor: colorCode}} side="front" />
+                                            {cardType === "new" ? (
+                                                <NewBusinessCard data={{...cardData, themeColor: colorCode}} side="front" />
+                                            ) : (
+                                                <BusinessCard data={{...cardData, themeColor: colorCode}} side="front" />
+                                            )}
                                         </div>
                                         <div ref={backRef}>
-                                            <BusinessCard data={{...cardData, themeColor: colorCode}} side="back" />
+                                            {cardType === "new" ? (
+                                                <NewBusinessCard data={{...cardData, themeColor: colorCode}} side="back" />
+                                            ) : (
+                                                <BusinessCard data={{...cardData, themeColor: colorCode}} side="back" />
+                                            )}
                                         </div>
                                     </div>
-                                    <BusinessCard
-                                        data={{...cardData, themeColor: colorCode}}
-                                        side={currentSide}
-                                    />
+                                    {cardType === "new" ? (
+                                        <NewBusinessCard
+                                            data={{...cardData, themeColor: colorCode}}
+                                            side={currentSide}
+                                        />
+                                    ) : (
+                                        <BusinessCard
+                                            data={{...cardData, themeColor: colorCode}}
+                                            side={currentSide}
+                                        />
+                                    )}
                                 </div>
                             </div>
 
