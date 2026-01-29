@@ -23,6 +23,7 @@ import useAllDetails from "../../features/all-details/useAllDetails";
 import LeadDetailsModal from "../../features/leads/LeadDetailsModal";
 import styles from "./LeadsBaseTable.module.css";
 import LeadTableCell from "./lastFollowUpDetails";
+import { useMyPermissions } from "../../hooks/useHasPermission";
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const tableStyles = {
@@ -226,6 +227,25 @@ export default function LeadsBaseTable({
     const [isBulkSending, setIsBulkSending] = useState(false);
     const [searchParams, setSearchParams] = useSearchParams();
     const status = searchParams.get("status") || "ACTIVE"; // "DEAL"
+    const { hasPermission } = useMyPermissions();
+    const currentUserId = companyData?.current_user_details?.id;
+
+    const handleClaim = (leadId) => {
+        if (!currentUserId) {
+            toast.error("User details not found");
+            return;
+        }
+        changeLead(
+            {
+                id: leadId,
+                payload: { agent_Id: currentUserId },
+            },
+            {
+                onSuccess: () => toast.success("Lead claimed successfully"),
+            }
+        );
+    };
+
     const extractInfoFromMessage = (text) => {
         if (!text) return { link: "", refNumber: "", phone: "" };
 
@@ -685,7 +705,7 @@ Looking forward to helping you find the right property in Dubai. 🏡`;
                                     borderRadius: "8px",
                                     marginBottom: "4px",
                                 }}
-                                // onClick={() => handleRowClick(item.id)}
+                            // onClick={() => handleRowClick(item.id)}
                             >
                                 <td
                                     style={{ ...tableStyles.td, width: "50px" }}
@@ -711,16 +731,15 @@ Looking forward to helping you find the right property in Dubai. 🏡`;
                                             size="small"
                                         />
                                         <div
-                                            className={`${styles.statusIndicator} ${
-                                                item?.status === "INACTIVE"
-                                                    ? styles.statusInactive
-                                                    : item?.status === "PENDING"
-                                                      ? styles.statusPending
-                                                      : item?.status ===
-                                                          "CONVERTED"
+                                            className={`${styles.statusIndicator} ${item?.status === "INACTIVE"
+                                                ? styles.statusInactive
+                                                : item?.status === "PENDING"
+                                                    ? styles.statusPending
+                                                    : item?.status ===
+                                                        "CONVERTED"
                                                         ? styles.statusConverted
                                                         : styles.statusActive
-                                            }`}
+                                                }`}
                                             title={item?.status || "ACTIVE"}
                                         >
                                             {item?.status === "INACTIVE" ? (
@@ -861,152 +880,152 @@ Looking forward to helping you find the right property in Dubai. 🏡`;
                                             >
                                                 {item?.clientSubSource?.toLowerCase() ===
                                                     "whatsapp" && (
-                                                    <div
-                                                        onClick={() =>
-                                                            handleWhatsAppClick(
-                                                                item?.leads_message,
-                                                                item?.agent
-                                                                    ?.name,
-                                                                item?.phone,
-                                                                item?.clientType,
-                                                                item
-                                                                    ?.preferred_property?.[0]
-                                                            )
-                                                        }
-                                                        style={{
-                                                            display: "flex",
-                                                            alignItems:
-                                                                "center",
-                                                            justifyContent:
-                                                                "center",
-                                                            cursor: "pointer",
-                                                            position:
-                                                                "relative",
-                                                        }}
-                                                        className="whatsapp-tooltip-container"
-                                                    >
-                                                        <img
-                                                            src="/icons/whatsapp.svg"
-                                                            alt="whatsapp"
+                                                        <div
+                                                            onClick={() =>
+                                                                handleWhatsAppClick(
+                                                                    item?.leads_message,
+                                                                    item?.agent
+                                                                        ?.name,
+                                                                    item?.phone,
+                                                                    item?.clientType,
+                                                                    item
+                                                                        ?.preferred_property?.[0]
+                                                                )
+                                                            }
                                                             style={{
-                                                                width: "20px",
-                                                                height: "20px",
-                                                                backgroundColor:
-                                                                    "#25D366",
-                                                                borderRadius:
-                                                                    "4px",
-                                                                padding: "2px",
+                                                                display: "flex",
+                                                                alignItems:
+                                                                    "center",
+                                                                justifyContent:
+                                                                    "center",
+                                                                cursor: "pointer",
+                                                                position:
+                                                                    "relative",
                                                             }}
-                                                        />
-                                                        {item
-                                                            ?.whatsapp_delivery_notifications
-                                                            ?.length > 0 && (
-                                                            <div
-                                                                className="whatsapp-tooltip"
+                                                            className="whatsapp-tooltip-container"
+                                                        >
+                                                            <img
+                                                                src="/icons/whatsapp.svg"
+                                                                alt="whatsapp"
                                                                 style={{
-                                                                    display:
-                                                                        "none",
-                                                                    position:
-                                                                        "absolute",
-                                                                    left: "50%",
-                                                                    bottom: "-120px",
-                                                                    transform:
-                                                                        "translateX(-50%)",
+                                                                    width: "20px",
+                                                                    height: "20px",
                                                                     backgroundColor:
-                                                                        "#ffffff",
-                                                                    color: "#4b5563",
-                                                                    padding:
-                                                                        "12px 16px",
+                                                                        "#25D366",
                                                                     borderRadius:
-                                                                        "8px",
-                                                                    fontSize:
-                                                                        "14px",
-                                                                    whiteSpace:
-                                                                        "nowrap",
-                                                                    boxShadow:
-                                                                        "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
-                                                                    border: "1px solid #e5e7eb",
+                                                                        "4px",
+                                                                    padding: "2px",
                                                                 }}
-                                                            >
-                                                                <div
-                                                                    style={{
-                                                                        display:
-                                                                            "flex",
-                                                                        flexDirection:
-                                                                            "column",
-                                                                        gap: "4px",
-                                                                    }}
-                                                                >
-                                                                    {item.whatsapp_delivery_notifications.map(
-                                                                        (
-                                                                            notification,
-                                                                            index
-                                                                        ) => (
-                                                                            <div
-                                                                                key={
+                                                            />
+                                                            {item
+                                                                ?.whatsapp_delivery_notifications
+                                                                ?.length > 0 && (
+                                                                    <div
+                                                                        className="whatsapp-tooltip"
+                                                                        style={{
+                                                                            display:
+                                                                                "none",
+                                                                            position:
+                                                                                "absolute",
+                                                                            left: "50%",
+                                                                            bottom: "-120px",
+                                                                            transform:
+                                                                                "translateX(-50%)",
+                                                                            backgroundColor:
+                                                                                "#ffffff",
+                                                                            color: "#4b5563",
+                                                                            padding:
+                                                                                "12px 16px",
+                                                                            borderRadius:
+                                                                                "8px",
+                                                                            fontSize:
+                                                                                "14px",
+                                                                            whiteSpace:
+                                                                                "nowrap",
+                                                                            boxShadow:
+                                                                                "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+                                                                            border: "1px solid #e5e7eb",
+                                                                        }}
+                                                                    >
+                                                                        <div
+                                                                            style={{
+                                                                                display:
+                                                                                    "flex",
+                                                                                flexDirection:
+                                                                                    "column",
+                                                                                gap: "4px",
+                                                                            }}
+                                                                        >
+                                                                            {item.whatsapp_delivery_notifications.map(
+                                                                                (
+                                                                                    notification,
                                                                                     index
-                                                                                }
-                                                                            >
-                                                                                <span
-                                                                                    style={{
-                                                                                        fontWeight:
-                                                                                            "500",
-                                                                                    }}
-                                                                                >
-                                                                                    Status:{" "}
-                                                                                </span>
-                                                                                {
-                                                                                    notification.status
-                                                                                }
-                                                                                <br />
-                                                                                <span
-                                                                                    style={{
-                                                                                        fontWeight:
-                                                                                            "500",
-                                                                                    }}
-                                                                                >
-                                                                                    Time:{" "}
-                                                                                </span>
-                                                                                {new Date(
-                                                                                    notification.created_at
-                                                                                ).toLocaleString()}
-                                                                            </div>
-                                                                        )
-                                                                    )}
-                                                                </div>
-                                                            </div>
-                                                        )}
-                                                    </div>
-                                                )}
+                                                                                ) => (
+                                                                                    <div
+                                                                                        key={
+                                                                                            index
+                                                                                        }
+                                                                                    >
+                                                                                        <span
+                                                                                            style={{
+                                                                                                fontWeight:
+                                                                                                    "500",
+                                                                                            }}
+                                                                                        >
+                                                                                            Status:{" "}
+                                                                                        </span>
+                                                                                        {
+                                                                                            notification.status
+                                                                                        }
+                                                                                        <br />
+                                                                                        <span
+                                                                                            style={{
+                                                                                                fontWeight:
+                                                                                                    "500",
+                                                                                            }}
+                                                                                        >
+                                                                                            Time:{" "}
+                                                                                        </span>
+                                                                                        {new Date(
+                                                                                            notification.created_at
+                                                                                        ).toLocaleString()}
+                                                                                    </div>
+                                                                                )
+                                                                            )}
+                                                                        </div>
+                                                                    </div>
+                                                                )}
+                                                        </div>
+                                                    )}
                                                 {item?.clientSubSource?.toLowerCase() ===
                                                     "email" && (
-                                                    <div
-                                                        style={{
-                                                            display: "flex",
-                                                            alignItems:
-                                                                "center",
-                                                            justifyContent:
-                                                                "center",
-                                                        }}
-                                                    >
-                                                        <img
-                                                            src="/icons/email.svg"
-                                                            alt="email"
+                                                        <div
                                                             style={{
-                                                                width: "20px",
-                                                                height: "20px",
-                                                                filter: "brightness(0)",
-                                                                borderRadius:
-                                                                    "4px",
-                                                                padding: "2px",
+                                                                display: "flex",
+                                                                alignItems:
+                                                                    "center",
+                                                                justifyContent:
+                                                                    "center",
                                                             }}
-                                                        />
-                                                    </div>
-                                                )}
+                                                        >
+                                                            <img
+                                                                src="/icons/email.svg"
+                                                                alt="email"
+                                                                style={{
+                                                                    width: "20px",
+                                                                    height: "20px",
+                                                                    filter: "brightness(0)",
+                                                                    borderRadius:
+                                                                        "4px",
+                                                                    padding: "2px",
+                                                                }}
+                                                            />
+                                                        </div>
+                                                    )}
                                                 {item?.clientSubSource !==
                                                     "WhatsApp" &&
                                                     item?.clientSubSource?.toLowerCase() !==
-                                                        "email" &&
+                                                    "email" &&
                                                     capitalizeFirstLetter(
                                                         item?.clientSubSource
                                                     )}
@@ -1131,7 +1150,7 @@ Looking forward to helping you find the right property in Dubai. 🏡`;
                                                                 navigator.clipboard
                                                                     .writeText(
                                                                         item?.leads_message ||
-                                                                            "N/A"
+                                                                        "N/A"
                                                                     )
                                                                     .then(
                                                                         () => {
@@ -1198,65 +1217,114 @@ Looking forward to helping you find the right property in Dubai. 🏡`;
                                         )}
                                     </div>
                                 </td>
-                                <td
-                                    style={{ ...tableStyles.td, width: "80px" }}
-                                >
-                                    <Modal>
-                                        <Modal.Open openWindowName="chooseAgent">
-                                            <button
-                                                disabled={isUpdatingLead}
-                                                style={tableStyles.agentButton}
-                                            >
-                                                {item?.agent?.avatar ? (
+                                <td style={{ ...tableStyles.td, width: "80px" }}>
+                                    {hasPermission("assign_leads") ? (
+                                        <Modal>
+                                            <Modal.Open openWindowName="chooseAgent">
+                                                <button
+                                                    disabled={isUpdatingLead}
+                                                    style={
+                                                        tableStyles.agentButton
+                                                    }
+                                                >
+                                                    {item?.agent?.avatar ? (
+                                                        <img
+                                                            src={
+                                                                item?.agent
+                                                                    ?.avatar
+                                                            }
+                                                            style={{
+                                                                width: "20px",
+                                                                height: "20px",
+                                                                borderRadius:
+                                                                    "50%",
+                                                                objectFit:
+                                                                    "cover",
+                                                                marginRight:
+                                                                    "2px",
+                                                            }}
+                                                        />
+                                                    ) : (
+                                                        <span
+                                                            style={{
+                                                                marginRight:
+                                                                    "2px",
+                                                                fontSize:
+                                                                    "10px",
+                                                            }}
+                                                        >
+                                                            {item?.agent?.name}
+                                                        </span>
+                                                    )}
                                                     <img
-                                                        src={
-                                                            item?.agent?.avatar
-                                                        }
+                                                        src="/icons/chevron-down.svg"
                                                         style={{
-                                                            width: "20px",
-                                                            height: "20px",
-                                                            borderRadius: "50%",
-                                                            objectFit: "cover",
-                                                            marginRight: "2px",
+                                                            width: "10px",
+                                                            height: "10px",
+                                                            opacity: 0.5,
                                                         }}
                                                     />
-                                                ) : (
-                                                    <span
-                                                        style={{
-                                                            marginRight: "2px",
-                                                            fontSize: "10px",
-                                                        }}
-                                                    >
-                                                        {item?.agent?.title}
-                                                    </span>
-                                                )}
+                                                </button>
+                                            </Modal.Open>
+                                            <Modal.Window name="chooseAgent">
+                                                <AgentChangeModal
+                                                    staffData={staffData}
+                                                    onChangeAgent={(
+                                                        agentId,
+                                                        onCloseModal
+                                                    ) =>
+                                                        handleChangeAgent(
+                                                            agentId,
+                                                            item.id,
+                                                            onCloseModal
+                                                        )
+                                                    }
+                                                    isChangingAgent={
+                                                        isUpdatingLead
+                                                    }
+                                                />
+                                            </Modal.Window>
+                                        </Modal>
+                                    ) : item.status === "POOL" ? (
+                                        <button
+                                            disabled={isUpdatingLead}
+                                            onClick={() => handleClaim(item.id)}
+                                            style={{
+                                                ...tableStyles.agentButton,
+                                                background: "#22c55e",
+                                                color: "white",
+                                                border: "none",
+                                                justifyContent: "center",
+                                            }}
+                                        >
+                                            Claim
+                                        </button>
+                                    ) : (
+                                        <div style={tableStyles.agentButton}>
+                                            {item?.agent?.avatar ? (
                                                 <img
-                                                    src="/icons/chevron-down.svg"
+                                                    src={item?.agent?.avatar}
                                                     style={{
-                                                        width: "10px",
-                                                        height: "10px",
-                                                        opacity: 0.5,
+                                                        width: "20px",
+                                                        height: "20px",
+                                                        borderRadius: "50%",
+                                                        objectFit: "cover",
+                                                        marginRight: "2px",
                                                     }}
                                                 />
-                                            </button>
-                                        </Modal.Open>
-                                        <Modal.Window name="chooseAgent">
-                                            <AgentChangeModal
-                                                staffData={staffData}
-                                                onChangeAgent={(
-                                                    agentId,
-                                                    onCloseModal
-                                                ) =>
-                                                    handleChangeAgent(
-                                                        agentId,
-                                                        item.id,
-                                                        onCloseModal
-                                                    )
-                                                }
-                                                isChangingAgent={isUpdatingLead}
-                                            />
-                                        </Modal.Window>
-                                    </Modal>
+                                            ) : (
+                                                <span
+                                                    style={{
+                                                        marginRight: "2px",
+                                                        fontSize: "10px",
+                                                    }}
+                                                >
+                                                    {item?.agent?.name ||
+                                                        "N/A"}
+                                                </span>
+                                            )}
+                                        </div>
+                                    )}
                                 </td>
                                 <td
                                     style={{
@@ -1319,152 +1387,152 @@ Looking forward to helping you find the right property in Dubai. 🏡`;
                                         <div>
                                             {item?.property_type?.length !==
                                                 0 && (
-                                                <div
-                                                    style={{
-                                                        display: "flex",
-                                                        flexWrap: "wrap",
-                                                        gap: "4px",
-                                                        marginBottom: "8px",
-                                                    }}
-                                                >
-                                                    {item?.property_type?.map(
-                                                        (type, index) => (
-                                                            <span
-                                                                key={index}
-                                                                style={{
-                                                                    display:
-                                                                        "inline-block",
-                                                                    padding:
-                                                                        "2px 8px",
-                                                                    backgroundColor:
-                                                                        "#f1f5f9",
-                                                                    color: "#000000",
-                                                                    borderRadius:
-                                                                        "4px",
-                                                                    fontSize:
-                                                                        "11px",
-                                                                    fontWeight:
-                                                                        "500",
-                                                                    border: "1px solid #e2e8f0",
-                                                                }}
-                                                            >
-                                                                {type}
-                                                            </span>
-                                                        )
-                                                    )}
-                                                </div>
-                                            )}
+                                                    <div
+                                                        style={{
+                                                            display: "flex",
+                                                            flexWrap: "wrap",
+                                                            gap: "4px",
+                                                            marginBottom: "8px",
+                                                        }}
+                                                    >
+                                                        {item?.property_type?.map(
+                                                            (type, index) => (
+                                                                <span
+                                                                    key={index}
+                                                                    style={{
+                                                                        display:
+                                                                            "inline-block",
+                                                                        padding:
+                                                                            "2px 8px",
+                                                                        backgroundColor:
+                                                                            "#f1f5f9",
+                                                                        color: "#000000",
+                                                                        borderRadius:
+                                                                            "4px",
+                                                                        fontSize:
+                                                                            "11px",
+                                                                        fontWeight:
+                                                                            "500",
+                                                                        border: "1px solid #e2e8f0",
+                                                                    }}
+                                                                >
+                                                                    {type}
+                                                                </span>
+                                                            )
+                                                        )}
+                                                    </div>
+                                                )}
 
                                             {item?.preferred_property_details
                                                 ?.length !== 0
                                                 ? item?.preferred_property_details?.map(
-                                                      (data) => (
-                                                          <div
-                                                              key={data?.id}
-                                                              style={{
-                                                                  position:
-                                                                      "relative",
-                                                                  display:
-                                                                      "inline-block",
-                                                                  marginRight:
-                                                                      "2px",
-                                                              }}
-                                                          >
-                                                              <span
-                                                                  onClick={() =>
-                                                                      handlePreferredPropertyClick(
-                                                                          data?.id,
-                                                                          item?.clientType
-                                                                      )
-                                                                  }
-                                                                  style={{
-                                                                      cursor: "pointer",
-                                                                      color: "#2563eb",
-                                                                      textDecoration:
-                                                                          "underline",
-                                                                  }}
-                                                              >
-                                                                  {data?.title}
-                                                              </span>
-                                                              <div
-                                                                  style={{
-                                                                      position:
-                                                                          "absolute",
-                                                                      bottom: "auto",
-                                                                      top: "7rem",
-                                                                      left: "-8rem",
-                                                                      backgroundColor:
-                                                                          "white",
-                                                                      padding:
-                                                                          "10px",
-                                                                      borderRadius:
-                                                                          "4px",
-                                                                      boxShadow:
-                                                                          "0 2px 10px rgba(0,0,0,0.1)",
-                                                                      minWidth:
-                                                                          "250px",
-                                                                      display:
-                                                                          "none",
-                                                                      border: "1px solid #eee",
-                                                                  }}
-                                                                  className="tooltip"
-                                                              >
-                                                                  <p>
-                                                                      <strong>
-                                                                          Title:
-                                                                      </strong>{" "}
-                                                                      {
-                                                                          data?.title
-                                                                      }
-                                                                  </p>
-                                                                  <p>
-                                                                      <strong>
-                                                                          Type:
-                                                                      </strong>{" "}
-                                                                      {
-                                                                          data?.listingType
-                                                                      }
-                                                                  </p>
-                                                                  <p>
-                                                                      <strong>
-                                                                          Price:
-                                                                      </strong>{" "}
-                                                                      {
-                                                                          data?.price
-                                                                      }{" "}
-                                                                      /{" "}
-                                                                      {
-                                                                          data?.priceType
-                                                                      }
-                                                                  </p>
-                                                                  <p>
-                                                                      <strong>
-                                                                          Bedrooms:
-                                                                      </strong>{" "}
-                                                                      {data?.bedrooms ||
-                                                                          "N/A"}
-                                                                  </p>
-                                                                  <p>
-                                                                      <strong>
-                                                                          Bathrooms:
-                                                                      </strong>{" "}
-                                                                      {data?.bathrooms ||
-                                                                          "N/A"}
-                                                                  </p>
-                                                                  <p>
-                                                                      <strong>
-                                                                          Location:
-                                                                      </strong>{" "}
-                                                                      {data
-                                                                          ?.location
-                                                                          ?.city
-                                                                          ? `${data?.location?.city}${data?.location?.community ? `, ${data?.location?.community}` : ""}${data?.location?.sub_community ? `, ${data?.location?.sub_community}` : ""}`
-                                                                          : "N/A"}
-                                                                  </p>
-                                                              </div>
-                                                          </div>
-                                                      )
-                                                  )
+                                                    (data) => (
+                                                        <div
+                                                            key={data?.id}
+                                                            style={{
+                                                                position:
+                                                                    "relative",
+                                                                display:
+                                                                    "inline-block",
+                                                                marginRight:
+                                                                    "2px",
+                                                            }}
+                                                        >
+                                                            <span
+                                                                onClick={() =>
+                                                                    handlePreferredPropertyClick(
+                                                                        data?.id,
+                                                                        item?.clientType
+                                                                    )
+                                                                }
+                                                                style={{
+                                                                    cursor: "pointer",
+                                                                    color: "#2563eb",
+                                                                    textDecoration:
+                                                                        "underline",
+                                                                }}
+                                                            >
+                                                                {data?.title}
+                                                            </span>
+                                                            <div
+                                                                style={{
+                                                                    position:
+                                                                        "absolute",
+                                                                    bottom: "auto",
+                                                                    top: "7rem",
+                                                                    left: "-8rem",
+                                                                    backgroundColor:
+                                                                        "white",
+                                                                    padding:
+                                                                        "10px",
+                                                                    borderRadius:
+                                                                        "4px",
+                                                                    boxShadow:
+                                                                        "0 2px 10px rgba(0,0,0,0.1)",
+                                                                    minWidth:
+                                                                        "250px",
+                                                                    display:
+                                                                        "none",
+                                                                    border: "1px solid #eee",
+                                                                }}
+                                                                className="tooltip"
+                                                            >
+                                                                <p>
+                                                                    <strong>
+                                                                        Title:
+                                                                    </strong>{" "}
+                                                                    {
+                                                                        data?.title
+                                                                    }
+                                                                </p>
+                                                                <p>
+                                                                    <strong>
+                                                                        Type:
+                                                                    </strong>{" "}
+                                                                    {
+                                                                        data?.listingType
+                                                                    }
+                                                                </p>
+                                                                <p>
+                                                                    <strong>
+                                                                        Price:
+                                                                    </strong>{" "}
+                                                                    {
+                                                                        data?.price
+                                                                    }{" "}
+                                                                    /{" "}
+                                                                    {
+                                                                        data?.priceType
+                                                                    }
+                                                                </p>
+                                                                <p>
+                                                                    <strong>
+                                                                        Bedrooms:
+                                                                    </strong>{" "}
+                                                                    {data?.bedrooms ||
+                                                                        "N/A"}
+                                                                </p>
+                                                                <p>
+                                                                    <strong>
+                                                                        Bathrooms:
+                                                                    </strong>{" "}
+                                                                    {data?.bathrooms ||
+                                                                        "N/A"}
+                                                                </p>
+                                                                <p>
+                                                                    <strong>
+                                                                        Location:
+                                                                    </strong>{" "}
+                                                                    {data
+                                                                        ?.location
+                                                                        ?.city
+                                                                        ? `${data?.location?.city}${data?.location?.community ? `, ${data?.location?.community}` : ""}${data?.location?.sub_community ? `, ${data?.location?.sub_community}` : ""}`
+                                                                        : "N/A"}
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    )
+                                                )
                                                 : "-"}
                                         </div>
                                     </div>

@@ -8,14 +8,40 @@ import LeadItemTag from "./LeadItemTag";
 import useInfiniteLeads from "./useInfiniteLeads";
 import ClientSourceIcon from "../../components/ClientSourceIcon";
 
+import useUpdateLead from "./useUpdateLead";
+import useAllDetails from "../all-details/useAllDetails";
+import { useMyPermissions } from "../../hooks/useHasPermission";
+
 function Leads({ leadType, containerRef, data: passedLeads, fetchNextPage, hasNextPage, isFetchingNextPage }) {
     const navigate = useNavigate();
-    const { 
-        isLoading, 
-        leads: hookLeads, 
+    const {
+        isLoading,
+        leads: hookLeads,
         error
     } = useInfiniteLeads(leadType);
-    
+
+    const { changeLead, isPending: isUpdatingLead } = useUpdateLead();
+    const { hasPermission } = useMyPermissions();
+    const { data: allDetails } = useAllDetails();
+    const currentUserId = allDetails?.current_user_details?.id;
+
+    const handleClaim = (e, leadId) => {
+        e.stopPropagation();
+        if (!currentUserId) {
+            toast.error("User details not found");
+            return;
+        }
+        changeLead(
+            {
+                id: leadId,
+                payload: { agent_Id: currentUserId },
+            },
+            {
+                onSuccess: () => toast.success("Lead claimed successfully"),
+            }
+        );
+    };
+
     const leads = passedLeads || hookLeads;
 
     useEffect(() => {
@@ -31,7 +57,7 @@ function Leads({ leadType, containerRef, data: passedLeads, fetchNextPage, hasNe
         if (scrollPercentage > 80 && hasNextPage && !isFetchingNextPage) {
             const currentPage = leads?.page || 0;
             const totalPages = leads?.totalPages || 0;
-            
+
             if (currentPage < totalPages) {
                 fetchNextPage();
             }
@@ -60,10 +86,10 @@ function Leads({ leadType, containerRef, data: passedLeads, fetchNextPage, hasNe
                                 <h2>{item.name}</h2>
                                 <div className={styles.leadTopRight}>
 
-                                <LeadItemTag leadData={item} />
-                                <span>
-                                    {`${getDaysFromCurrentDate(item.createTime)} days ago`}
-                                </span>
+                                    <LeadItemTag leadData={item} />
+                                    <span>
+                                        {`${getDaysFromCurrentDate(item.createTime)} days ago`}
+                                    </span>
                                 </div>
                             </div>
                             <ul>
@@ -150,7 +176,26 @@ function Leads({ leadType, containerRef, data: passedLeads, fetchNextPage, hasNe
                                 <li>
                                     <span>Agent</span>
                                     <span>
-                                        {item?.agent?.name || "N/A"}
+                                        {!hasPermission("assign_leads") && item.status === "POOL" ? (
+                                            <button
+                                                disabled={isUpdatingLead}
+                                                onClick={(e) => handleClaim(e, item.id)}
+                                                style={{
+                                                    backgroundColor: "#22c55e",
+                                                    color: "white",
+                                                    border: "none",
+                                                    padding: "2px 8px",
+                                                    borderRadius: "4px",
+                                                    cursor: "pointer",
+                                                    fontSize: "12px",
+                                                    zIndex: 10
+                                                }}
+                                            >
+                                                Claim
+                                            </button>
+                                        ) : (
+                                            item?.agent?.name || "N/A"
+                                        )}
                                     </span>
                                 </li>
                             </ul>

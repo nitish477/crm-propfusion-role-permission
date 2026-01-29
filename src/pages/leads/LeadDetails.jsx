@@ -232,54 +232,54 @@ function LeadDetails() {
             <section className={`${styles.leadDetails} sectionStyles`}>
                 {(data?.[0]?.stage_data?.name ||
                     data?.[0]?.rating_data?.name) && (
-                    <div className="sectionDiv">
-                        <div>
-                            <span
-                                style={{
-                                    fontWeight: 600,
-                                    color: data?.[0]?.stage_data?.color_code,
-                                    borderColor:
-                                        data?.[0]?.stage_data?.color_code,
-                                    border: "1px solid",
-                                    padding: "5px 10px",
-                                    borderRadius: "8px",
-                                }}
-                            >
-                                {data?.[0]?.stage_data?.name}
-                            </span>
-                            <span
-                                style={{
-                                    marginLeft: "10px",
-                                    fontWeight: 600,
-                                    color: data?.[0]?.rating_data?.color_code,
-                                    borderColor:
-                                        data?.[0]?.rating_data?.color_code,
-                                    border: "1px solid",
-                                    padding: "5px 10px",
-                                    borderRadius: "8px",
-                                }}
-                            >
-                                {data?.[0]?.rating_data?.name}
-                            </span>
-                            <span
-                                style={{
-                                    marginLeft: "10px",
-                                    fontWeight: 600,
-                                    color: data?.[0]?.rating_data?.color_code,
-                                    borderColor:
-                                        data?.[0]?.rating_data?.color_code,
-                                    border: "1px solid",
-                                    padding: "5px 10px",
-                                    borderRadius: "8px",
-                                }}
-                            >
-                                {leadData?.[0]?.is_public
-                                    ? "Public"
-                                    : "Private"}
-                            </span>
+                        <div className="sectionDiv">
+                            <div>
+                                <span
+                                    style={{
+                                        fontWeight: 600,
+                                        color: data?.[0]?.stage_data?.color_code,
+                                        borderColor:
+                                            data?.[0]?.stage_data?.color_code,
+                                        border: "1px solid",
+                                        padding: "5px 10px",
+                                        borderRadius: "8px",
+                                    }}
+                                >
+                                    {data?.[0]?.stage_data?.name}
+                                </span>
+                                <span
+                                    style={{
+                                        marginLeft: "10px",
+                                        fontWeight: 600,
+                                        color: data?.[0]?.rating_data?.color_code,
+                                        borderColor:
+                                            data?.[0]?.rating_data?.color_code,
+                                        border: "1px solid",
+                                        padding: "5px 10px",
+                                        borderRadius: "8px",
+                                    }}
+                                >
+                                    {data?.[0]?.rating_data?.name}
+                                </span>
+                                <span
+                                    style={{
+                                        marginLeft: "10px",
+                                        fontWeight: 600,
+                                        color: data?.[0]?.rating_data?.color_code,
+                                        borderColor:
+                                            data?.[0]?.rating_data?.color_code,
+                                        border: "1px solid",
+                                        padding: "5px 10px",
+                                        borderRadius: "8px",
+                                    }}
+                                >
+                                    {leadData?.[0]?.is_public
+                                        ? "Public"
+                                        : "Private"}
+                                </span>
+                            </div>
                         </div>
-                    </div>
-                )}
+                    )}
                 <div className="sectionDiv">
                     <Breadcrumb
                         loading={isLoadingStages}
@@ -367,16 +367,16 @@ function LeadDetails() {
                                     <span>
                                         {leadData[0]?.location
                                             ? [
-                                                  leadData[0]?.location?.city,
-                                                  leadData[0]?.location
-                                                      ?.community,
-                                                  leadData[0]?.location
-                                                      ?.sub_community,
-                                                  leadData[0]?.location
-                                                      ?.property_name,
-                                              ]
-                                                  .filter(Boolean)
-                                                  .join(", ") || "N/A"
+                                                leadData[0]?.location?.city,
+                                                leadData[0]?.location
+                                                    ?.community,
+                                                leadData[0]?.location
+                                                    ?.sub_community,
+                                                leadData[0]?.location
+                                                    ?.property_name,
+                                            ]
+                                                .filter(Boolean)
+                                                .join(", ") || "N/A"
                                             : "N/A"}
                                     </span>
                                 </li>
@@ -494,11 +494,11 @@ function LeadDetails() {
                                                     "nationality",
                                                     leadData[0]?.nationality
                                                         ? {
-                                                              value: leadData[0]
-                                                                  .nationality,
-                                                              label: leadData[0]
-                                                                  .nationality,
-                                                          }
+                                                            value: leadData[0]
+                                                                .nationality,
+                                                            label: leadData[0]
+                                                                .nationality,
+                                                        }
                                                         : null
                                                 );
                                                 setOpenNationalityModal(true);
@@ -546,32 +546,32 @@ function LeadDetails() {
                                         />
                                         {leadData[0]?.clientSubSource?.toLowerCase() ===
                                             "whatsapp" && (
-                                            <img
-                                                src="/icons/whatsapp/whatsapp.svg"
-                                                alt="whatsapp"
-                                                style={{
-                                                    width: "20px",
-                                                    height: "20px",
-                                                    backgroundColor: "#25D366",
-                                                    borderRadius: "4px",
-                                                    padding: "2px",
-                                                }}
-                                            />
-                                        )}
+                                                <img
+                                                    src="/icons/whatsapp/whatsapp.svg"
+                                                    alt="whatsapp"
+                                                    style={{
+                                                        width: "20px",
+                                                        height: "20px",
+                                                        backgroundColor: "#25D366",
+                                                        borderRadius: "4px",
+                                                        padding: "2px",
+                                                    }}
+                                                />
+                                            )}
                                         {leadData[0]?.clientSubSource?.toLowerCase() ===
                                             "email" && (
-                                            <img
-                                                src="/icons/email.svg"
-                                                alt="email"
-                                                style={{
-                                                    width: "20px",
-                                                    height: "20px",
-                                                    filter: "brightness(0)",
-                                                    borderRadius: "4px",
-                                                    padding: "2px",
-                                                }}
-                                            />
-                                        )}
+                                                <img
+                                                    src="/icons/email.svg"
+                                                    alt="email"
+                                                    style={{
+                                                        width: "20px",
+                                                        height: "20px",
+                                                        filter: "brightness(0)",
+                                                        borderRadius: "4px",
+                                                        padding: "2px",
+                                                    }}
+                                                />
+                                            )}
                                     </span>
                                 </li>
                                 <li>
@@ -610,10 +610,10 @@ function LeadDetails() {
                                     </span>
                                     <span>
                                         {leadData[0]?.property_type?.length !==
-                                        0
+                                            0
                                             ? leadData[0]?.property_type?.join?.(
-                                                  ", "
-                                              )
+                                                ", "
+                                            )
                                             : "N/A"}
                                     </span>
                                 </li>
@@ -701,7 +701,7 @@ function LeadDetails() {
                                                 setValue(
                                                     "to_bathroom",
                                                     leadData[0]?.to_bathroom ||
-                                                        ""
+                                                    ""
                                                 );
                                                 setOpenBathroomModal(true);
                                             }}
@@ -734,7 +734,7 @@ function LeadDetails() {
                                                 setValue(
                                                     "budgetFrom",
                                                     leadData[0]?.budgetFrom ||
-                                                        ""
+                                                    ""
                                                 );
                                                 setValue(
                                                     "budgetTo",
@@ -1048,9 +1048,9 @@ function LeadDetails() {
                                 onClick={handleClaim}
                                 disabled={isUpdatingLead}
                                 style={{
-                                    backgroundColor: "#90f6609e",
-                                    color: "black",
-                                    border: "1px solid #0cff92",
+                                    backgroundColor: "#22c55e",
+                                    color: "white",
+                                    border: "1px solid #22c55e",
                                 }}
                             >
                                 Claim Lead
@@ -1070,6 +1070,27 @@ function LeadDetails() {
                             Deal Lead
                         </button>
                         <AIPropertySuggestions leadId={leadData[0]?.id} />
+
+                        {/* Status Change Dropdown */}
+                        <select
+                            className="btnFormNormal"
+                            value={leadData[0]?.status || "ACTIVE"}
+                            onChange={(e) => handleStatusChange(e.target.value)}
+                            disabled={isUpdatingLead}
+                            style={{
+                                padding: "8px 12px",
+                                cursor: "pointer",
+                                border: "1px solid #d1d5db",
+                                backgroundColor: "white",
+                                borderRadius: "6px",
+                                fontWeight: "500",
+                            }}
+                        >
+                            <option value="ACTIVE">Active</option>
+                            <option value="INACTIVE">Inactive</option>
+                            <option value="POOL">Pool</option>
+                            <option value="DEAL">Closed Deal</option>
+                        </select>
 
                         {leadData[0]?.status === "ACTIVE" && (
                             <button

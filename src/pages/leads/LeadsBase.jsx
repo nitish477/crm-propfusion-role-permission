@@ -190,11 +190,15 @@ function LeadsBase() {
                                 buttonOptions={[
                                     { label: "Active Leads", value: "ACTIVE" },
                                     { label: "Closed Deal", value: "DEAL" },
-                                    // { label: "Leads Pool", value: "INACTIVE" },
-                                    {
-                                        label: "Inactive Leads",
-                                        value: "INACTIVE",
-                                    },
+                                    { label: "Pool", value: "POOL" },
+                                    ...(hasPermission("manage_leads")
+                                        ? [
+                                              {
+                                                  label: "Inactive Leads",
+                                                  value: "INACTIVE",
+                                              },
+                                          ]
+                                        : []),
                                     { label: "Draft Leads", value: "DRAFT" },
                                 ]}
                                 totalSize={totalSize}

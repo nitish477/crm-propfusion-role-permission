@@ -35,6 +35,7 @@ import GmailSvg from "../../assets/gmail.svg";
 import ClientSourceIcon from "../../components/ClientSourceIcon";
 import useAllDetails from "../../features/all-details/useAllDetails";
 import toast from "react-hot-toast";
+import { useMyPermissions } from "../../hooks/useHasPermission";
 
 // Move StageColumn component outside
 const StageColumn = ({
@@ -474,6 +475,24 @@ const DraggableLeadCard = ({
     const [tooltipContent, setTooltipContent] = useState("");
     const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
     const tooltipTimeout = useRef(null);
+    const { hasPermission } = useMyPermissions();
+    const currentUserId = allDetails?.current_user_details?.id;
+
+    const handleClaim = (leadId) => {
+        if (!currentUserId) {
+            toast.error("User details not found");
+            return;
+        }
+        changeLead(
+            {
+                id: leadId,
+                payload: { agent_Id: currentUserId },
+            },
+            {
+                onSuccess: () => toast.success("Lead claimed successfully"),
+            }
+        );
+    };
 
     const [{ isDragging }, drag] = useDrag(() => ({
         type: "LEAD",
@@ -858,162 +877,162 @@ Looking forward to helping you find the right property in Dubai. 🏡`;
                                     >
                                         {lead?.clientSubSource?.toLowerCase() ===
                                             "whatsapp" && (
-                                            <div
-                                                onClick={() =>
-                                                    handleWhatsAppClick(
-                                                        lead?.leads_message,
-                                                        lead?.agent?.name,
-                                                        lead?.phone
-                                                    )
-                                                }
-                                                style={{
-                                                    display: "flex",
-                                                    alignItems: "center",
-                                                    justifyContent: "center",
-                                                    cursor: "pointer",
-                                                    position: "relative",
-                                                    zIndex: 1001,
-                                                }}
-                                                className="whatsapp-tooltip-container"
-                                                onMouseEnter={
-                                                    handleWhatsAppTooltip
-                                                }
-                                            >
-                                                <img
-                                                    src="/icons/whatsapp/whatsapp.svg"
-                                                    alt="whatsapp"
+                                                <div
+                                                    onClick={() =>
+                                                        handleWhatsAppClick(
+                                                            lead?.leads_message,
+                                                            lead?.agent?.name,
+                                                            lead?.phone
+                                                        )
+                                                    }
                                                     style={{
-                                                        width: "20px",
-                                                        height: "20px",
-                                                        backgroundColor:
-                                                            "#25D366",
-                                                        borderRadius: "4px",
-                                                        padding: "2px",
+                                                        display: "flex",
+                                                        alignItems: "center",
+                                                        justifyContent: "center",
+                                                        cursor: "pointer",
+                                                        position: "relative",
+                                                        zIndex: 1001,
                                                     }}
-                                                />
-                                                {lead
-                                                    ?.whatsapp_delivery_notifications
-                                                    ?.length > 0 && (
-                                                    <div
-                                                        className="whatsapp-tooltip"
+                                                    className="whatsapp-tooltip-container"
+                                                    onMouseEnter={
+                                                        handleWhatsAppTooltip
+                                                    }
+                                                >
+                                                    <img
+                                                        src="/icons/whatsapp/whatsapp.svg"
+                                                        alt="whatsapp"
                                                         style={{
-                                                            display: "none",
-                                                            position:
-                                                                "absolute",
-                                                            left: "-180px",
-                                                            top: "-80px",
+                                                            width: "20px",
+                                                            height: "20px",
                                                             backgroundColor:
-                                                                "#ffffff",
-                                                            color: "#4b5563",
-                                                            padding: "8px 10px",
+                                                                "#25D366",
                                                             borderRadius: "4px",
-                                                            fontSize: "12px",
-                                                            whiteSpace:
-                                                                "nowrap",
-                                                            zIndex: 9999,
-                                                            boxShadow:
-                                                                "0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24)",
-                                                            border: "1px solid #e5e7eb",
-                                                            width: "180px",
+                                                            padding: "2px",
                                                         }}
-                                                    >
-                                                        <div
-                                                            style={{
-                                                                display: "flex",
-                                                                flexDirection:
-                                                                    "column",
-                                                                gap: "2px",
-                                                            }}
-                                                        >
-                                                            {lead.whatsapp_delivery_notifications.map(
-                                                                (
-                                                                    notification,
-                                                                    index
-                                                                ) => (
-                                                                    <div
-                                                                        key={
+                                                    />
+                                                    {lead
+                                                        ?.whatsapp_delivery_notifications
+                                                        ?.length > 0 && (
+                                                            <div
+                                                                className="whatsapp-tooltip"
+                                                                style={{
+                                                                    display: "none",
+                                                                    position:
+                                                                        "absolute",
+                                                                    left: "-180px",
+                                                                    top: "-80px",
+                                                                    backgroundColor:
+                                                                        "#ffffff",
+                                                                    color: "#4b5563",
+                                                                    padding: "8px 10px",
+                                                                    borderRadius: "4px",
+                                                                    fontSize: "12px",
+                                                                    whiteSpace:
+                                                                        "nowrap",
+                                                                    zIndex: 9999,
+                                                                    boxShadow:
+                                                                        "0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24)",
+                                                                    border: "1px solid #e5e7eb",
+                                                                    width: "180px",
+                                                                }}
+                                                            >
+                                                                <div
+                                                                    style={{
+                                                                        display: "flex",
+                                                                        flexDirection:
+                                                                            "column",
+                                                                        gap: "2px",
+                                                                    }}
+                                                                >
+                                                                    {lead.whatsapp_delivery_notifications.map(
+                                                                        (
+                                                                            notification,
                                                                             index
-                                                                        }
-                                                                        style={{
-                                                                            marginBottom:
-                                                                                "4px",
-                                                                        }}
-                                                                    >
-                                                                        <div
-                                                                            style={{
-                                                                                fontWeight:
-                                                                                    "500",
-                                                                                fontSize:
-                                                                                    "12px",
-                                                                                color: "#4a5568",
-                                                                                lineHeight:
-                                                                                    "1.3",
-                                                                            }}
-                                                                        >
-                                                                            Status:{" "}
-                                                                            {
-                                                                                notification.status
-                                                                            }
-                                                                        </div>
-                                                                        <div
-                                                                            style={{
-                                                                                fontSize:
-                                                                                    "11px",
-                                                                                color: "#718096",
-                                                                                lineHeight:
-                                                                                    "1.3",
-                                                                            }}
-                                                                        >
-                                                                            Time:{" "}
-                                                                            {new Date(
-                                                                                notification.created_at
-                                                                            )
-                                                                                .toLocaleString(
-                                                                                    undefined,
+                                                                        ) => (
+                                                                            <div
+                                                                                key={
+                                                                                    index
+                                                                                }
+                                                                                style={{
+                                                                                    marginBottom:
+                                                                                        "4px",
+                                                                                }}
+                                                                            >
+                                                                                <div
+                                                                                    style={{
+                                                                                        fontWeight:
+                                                                                            "500",
+                                                                                        fontSize:
+                                                                                            "12px",
+                                                                                        color: "#4a5568",
+                                                                                        lineHeight:
+                                                                                            "1.3",
+                                                                                    }}
+                                                                                >
+                                                                                    Status:{" "}
                                                                                     {
-                                                                                        month: "numeric",
-                                                                                        day: "numeric",
-                                                                                        year: "numeric",
-                                                                                        hour: "2-digit",
-                                                                                        minute: "2-digit",
-                                                                                        hour12: true,
+                                                                                        notification.status
                                                                                     }
-                                                                                )
-                                                                                .replace(
-                                                                                    ",",
-                                                                                    ""
-                                                                                )}
-                                                                        </div>
-                                                                    </div>
-                                                                )
-                                                            )}
-                                                        </div>
-                                                    </div>
-                                                )}
-                                            </div>
-                                        )}
+                                                                                </div>
+                                                                                <div
+                                                                                    style={{
+                                                                                        fontSize:
+                                                                                            "11px",
+                                                                                        color: "#718096",
+                                                                                        lineHeight:
+                                                                                            "1.3",
+                                                                                    }}
+                                                                                >
+                                                                                    Time:{" "}
+                                                                                    {new Date(
+                                                                                        notification.created_at
+                                                                                    )
+                                                                                        .toLocaleString(
+                                                                                            undefined,
+                                                                                            {
+                                                                                                month: "numeric",
+                                                                                                day: "numeric",
+                                                                                                year: "numeric",
+                                                                                                hour: "2-digit",
+                                                                                                minute: "2-digit",
+                                                                                                hour12: true,
+                                                                                            }
+                                                                                        )
+                                                                                        .replace(
+                                                                                            ",",
+                                                                                            ""
+                                                                                        )}
+                                                                                </div>
+                                                                            </div>
+                                                                        )
+                                                                    )}
+                                                                </div>
+                                                            </div>
+                                                        )}
+                                                </div>
+                                            )}
                                         {lead?.clientSubSource?.toLowerCase() ===
                                             "email" && (
-                                            <div
-                                                style={{
-                                                    display: "flex",
-                                                    alignItems: "center",
-                                                    justifyContent: "center",
-                                                }}
-                                            >
-                                                <img
-                                                    src="/icons/email.svg"
-                                                    alt="email"
+                                                <div
                                                     style={{
-                                                        width: "20px",
-                                                        height: "20px",
-                                                        filter: "brightness(0)",
-                                                        borderRadius: "4px",
-                                                        padding: "2px",
+                                                        display: "flex",
+                                                        alignItems: "center",
+                                                        justifyContent: "center",
                                                     }}
-                                                />
-                                            </div>
-                                        )}
+                                                >
+                                                    <img
+                                                        src="/icons/email.svg"
+                                                        alt="email"
+                                                        style={{
+                                                            width: "20px",
+                                                            height: "20px",
+                                                            filter: "brightness(0)",
+                                                            borderRadius: "4px",
+                                                            padding: "2px",
+                                                        }}
+                                                    />
+                                                </div>
+                                            )}
                                         <style>{`
                                             .whatsapp-tooltip-container:hover .whatsapp-tooltip {
                                                 display: block !important;
@@ -1021,7 +1040,7 @@ Looking forward to helping you find the right property in Dubai. 🏡`;
                                         `}</style>
                                         {lead?.clientSubSource !== "WhatsApp" &&
                                             lead?.clientSubSource?.toLowerCase() !==
-                                                "email" &&
+                                            "email" &&
                                             capitalizeFirstLetter(
                                                 lead?.clientSubSource
                                             )}
@@ -1090,12 +1109,12 @@ Looking forward to helping you find the right property in Dubai. 🏡`;
                             >
                                 {lead?.createTime
                                     ? new Date(lead.createTime)
-                                          .toLocaleString("en-US", {
-                                              day: "2-digit",
-                                              month: "2-digit",
-                                              year: "numeric",
-                                          })
-                                          .replace(",", "")
+                                        .toLocaleString("en-US", {
+                                            day: "2-digit",
+                                            month: "2-digit",
+                                            year: "numeric",
+                                        })
+                                        .replace(",", "")
                                     : "No create time"}
                             </span>
                         </div>
@@ -1120,7 +1139,9 @@ Looking forward to helping you find the right property in Dubai. 🏡`;
                                             }}
                                         >
                                             Last Contact:{" "}
-                                            {new Date(lead.latest_followup.date)
+                                            {new Date(
+                                                lead.latest_followup.date
+                                            )
                                                 .toLocaleString("en-US", {
                                                     day: "2-digit",
                                                     month: "2-digit",
@@ -1135,85 +1156,159 @@ Looking forward to helping you find the right property in Dubai. 🏡`;
                                 )}
 
                                 <div style={{ marginLeft: "auto" }}>
-                                    <Modal>
-                                        <Modal.Open openWindowName="chooseAgent">
-                                            <button
-                                                disabled={isUpdatingLead}
-                                                style={{
-                                                    ...tableStyles.agentButton,
-                                                    display: "flex",
-                                                    alignItems: "center",
-                                                    gap: "8px",
-                                                    padding: "4px 8px",
-                                                    fontSize: "14px",
-                                                }}
-                                                onMouseEnter={(e) =>
-                                                    handleMouseEnter(
-                                                        "Change agent",
-                                                        e
-                                                    )
-                                                }
-                                                onMouseLeave={handleMouseLeave}
-                                            >
-                                                {lead?.agent?.avatar ? (
-                                                    <img
-                                                        src={
-                                                            lead?.agent?.avatar
-                                                        }
-                                                        style={{
-                                                            width: "24px",
-                                                            height: "24px",
-                                                            borderRadius: "50%",
-                                                            objectFit: "cover",
-                                                        }}
-                                                        alt={lead?.agent?.title}
-                                                    />
-                                                ) : (
-                                                    <User
-                                                        size={24}
-                                                        style={{
-                                                            color: "#718096",
-                                                            borderRadius: "50%",
-                                                            border: "1px solid #E2E8F0",
-                                                            backgroundColor:
-                                                                "#F3F4F6",
-                                                            padding: "2px",
-                                                        }}
-                                                    />
-                                                )}
-                                                <span>
-                                                    {lead?.agent
-                                                        ? ""
-                                                        : "No Agent"}
-                                                </span>
-                                                <img
-                                                    src="/icons/chevron-down.svg"
+                                    {hasPermission("assign_leads") ? (
+                                        <Modal>
+                                            <Modal.Open openWindowName="chooseAgent">
+                                                <button
+                                                    disabled={isUpdatingLead}
                                                     style={{
-                                                        width: "14px",
-                                                        height: "14px",
-                                                        opacity: 0.5,
+                                                        ...tableStyles.agentButton,
+                                                        display: "flex",
+                                                        alignItems: "center",
+                                                        gap: "8px",
+                                                        padding: "4px 8px",
+                                                        fontSize: "14px",
                                                     }}
-                                                    alt="Change agent"
-                                                />
-                                            </button>
-                                        </Modal.Open>
-                                        <Modal.Window name="chooseAgent">
-                                            <AgentChangeModal
-                                                staffData={staffData}
-                                                onChangeAgent={(
-                                                    agentId,
-                                                    onCloseModal
-                                                ) =>
-                                                    handleChangeAgent(
+                                                    onMouseEnter={(e) =>
+                                                        handleMouseEnter(
+                                                            "Change agent",
+                                                            e
+                                                        )
+                                                    }
+                                                    onMouseLeave={
+                                                        handleMouseLeave
+                                                    }
+                                                >
+                                                    {lead?.agent?.avatar ? (
+                                                        <img
+                                                            src={
+                                                                lead?.agent
+                                                                    ?.avatar
+                                                            }
+                                                            style={{
+                                                                width: "24px",
+                                                                height: "24px",
+                                                                borderRadius:
+                                                                    "50%",
+                                                                objectFit:
+                                                                    "cover",
+                                                            }}
+                                                            alt={
+                                                                lead?.agent
+                                                                    ?.title
+                                                            }
+                                                        />
+                                                    ) : (
+                                                        <User
+                                                            size={24}
+                                                            style={{
+                                                                color: "#718096",
+                                                                borderRadius:
+                                                                    "50%",
+                                                                border: "1px solid #E2E8F0",
+                                                                backgroundColor:
+                                                                    "#F3F4F6",
+                                                                padding: "2px",
+                                                            }}
+                                                        />
+                                                    )}
+                                                    <span>
+                                                        {lead?.agent
+                                                            ? ""
+                                                            : "No Agent"}
+                                                    </span>
+                                                    <img
+                                                        src="/icons/chevron-down.svg"
+                                                        style={{
+                                                            width: "14px",
+                                                            height: "14px",
+                                                            opacity: 0.5,
+                                                        }}
+                                                        alt="Change agent"
+                                                    />
+                                                </button>
+                                            </Modal.Open>
+                                            <Modal.Window name="chooseAgent">
+                                                <AgentChangeModal
+                                                    staffData={staffData}
+                                                    onChangeAgent={(
                                                         agentId,
-                                                        lead.id,
                                                         onCloseModal
-                                                    )
-                                                }
-                                                isChangingAgent={isUpdatingLead}
-                                            />
-                                        </Modal.Window>
-                                    </Modal>
+                                                    ) =>
+                                                        handleChangeAgent(
+                                                            agentId,
+                                                            lead.id,
+                                                            onCloseModal
+                                                        )
+                                                    }
+                                                    isChangingAgent={
+                                                        isUpdatingLead
+                                                    }
+                                                />
+                                            </Modal.Window>
+                                        </Modal>
+                                    ) : lead.status === "POOL" ? (
+                                        <button
+                                            disabled={isUpdatingLead}
+                                            onClick={() =>
+                                                handleClaim(lead.id)
+                                            }
+                                            style={{
+                                                ...tableStyles.agentButton,
+                                                display: "flex",
+                                                alignItems: "center",
+                                                gap: "8px",
+                                                padding: "4px 8px",
+                                                fontSize: "14px",
+                                                background: "#22c55e",
+                                                color: "white",
+                                                border: "none",
+                                            }}
+                                        >
+                                            Claim
+                                        </button>
+                                    ) : (
+                                        <div
+                                            style={{
+                                                ...tableStyles.agentButton,
+                                                display: "flex",
+                                                alignItems: "center",
+                                                gap: "8px",
+                                                padding: "4px 8px",
+                                                fontSize: "14px",
+                                            }}
+                                        >
+                                            {lead?.agent?.avatar ? (
+                                                <img
+                                                    src={lead?.agent?.avatar}
+                                                    style={{
+                                                        width: "24px",
+                                                        height: "24px",
+                                                        borderRadius: "50%",
+                                                        objectFit: "cover",
+                                                    }}
+                                                    alt={lead?.agent?.title}
+                                                />
+                                            ) : (
+                                                <User
+                                                    size={24}
+                                                    style={{
+                                                        color: "#718096",
+                                                        borderRadius: "50%",
+                                                        border: "1px solid #E2E8F0",
+                                                        backgroundColor:
+                                                            "#F3F4F6",
+                                                        padding: "2px",
+                                                    }}
+                                                />
+                                            )}
+                                            <span>
+                                                {lead?.agent
+                                                    ? lead?.agent?.name
+                                                    : "No Agent"}
+                                            </span>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         </div>
