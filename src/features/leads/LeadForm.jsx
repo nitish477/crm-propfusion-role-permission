@@ -17,20 +17,22 @@ import {
     SOURCE_OPTIONS,
 } from "../../utils/constants";
 import useStaff from "../admin/staff/useStaff";
-import {  useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { getLocations } from "../../services/apiProperties";
-import {formatLocationsForMetaAds } from "../../utils/utils";
+import { formatLocationsForMetaAds } from "../../utils/utils";
 import { useAuth } from "../../context/AuthContext";
+import { useMyPermissions } from "../../hooks/useHasPermission";
 
 function LeadForm({ leadType }) {
     const [showPopover, setShowPopover] = useState(false);
     const [activePopover, setActivePopover] = useState(null);
     const { data: staffData, isLoading: isStaffLoading } = useStaff();
     const { currentUser } = useAuth();
+    const { hasPermission } = useMyPermissions();
 
     const [searchParams] = useSearchParams();
-        const no=searchParams.get('no');
-     const { watch, control, setValue } = useMultiStepForm();
+    const no = searchParams.get('no');
+    const { watch, control, setValue } = useMultiStepForm();
     const clientType = watch("clientType", leadType);
 
     const handleShowPopover = (type) => {
@@ -44,14 +46,16 @@ function LeadForm({ leadType }) {
     }
 
     useEffect(() => {
-        if(no) {
+        if (no) {
             setValue("phone", no);
         }
     }, [no, setValue]);
 
     // Automatically set current user as agent
     useEffect(() => {
-        if (currentUser && staffData && staffData.length > 0) {
+        const canAssignLeads = hasPermission("assign_leads");
+
+        if (!canAssignLeads && currentUser && staffData && staffData.length > 0) {
             const currentUserStaff = staffData.find(staff => staff.id === currentUser.id);
             if (currentUserStaff) {
                 setValue("agent_Id", {
@@ -60,16 +64,16 @@ function LeadForm({ leadType }) {
                 });
             }
         }
-    }, [currentUser, staffData, setValue]);
-    
+    }, [currentUser, staffData, setValue, hasPermission]);
+
     // Convert form data to send only IDs for multi-select fields
     useEffect(() => {
         // Get the parent form's handleSubmit function
         const formElement = document.querySelector('form');
         if (!formElement) return;
-        
+
         const originalSubmit = formElement.onsubmit;
-        
+
         formElement.onsubmit = (e) => {
             // Convert multi-select fields to arrays of IDs
             const preferredProperty = watch('preferred_property');
@@ -77,7 +81,7 @@ function LeadForm({ leadType }) {
             const preferredProject = watch('preferred_project');
             const areaId = watch('area_id');
             const propertyType = watch('property_type');
-            
+
             if (preferredProperty?.length) {
                 // Map the array of objects to just the value property
                 const ids = preferredProperty
@@ -90,7 +94,7 @@ function LeadForm({ leadType }) {
             } else {
                 setValue('preferred_property', []);
             }
-            
+
             if (preferredDeveloper?.length) {
                 const ids = preferredDeveloper
                     .filter(item => item && item.value)
@@ -99,7 +103,7 @@ function LeadForm({ leadType }) {
             } else {
                 setValue('preferred_developer', []);
             }
-            
+
             if (preferredProject?.length) {
                 const ids = preferredProject
                     .filter(item => item && item.value)
@@ -108,7 +112,7 @@ function LeadForm({ leadType }) {
             } else {
                 setValue('preferred_project', []);
             }
-            
+
             if (areaId?.length) {
                 const ids = areaId
                     .filter(item => item && item.value)
@@ -117,7 +121,7 @@ function LeadForm({ leadType }) {
             } else {
                 setValue('area_id', []);
             }
-            
+
             if (propertyType?.length) {
                 const values = propertyType
                     .filter(item => item && item.value)
@@ -129,11 +133,11 @@ function LeadForm({ leadType }) {
             } else {
                 setValue('property_type', []);
             }
-            
+
             // Call the original submit handler
             return originalSubmit?.(e);
         };
-        
+
         return () => {
             // Cleanup
             if (formElement) {
@@ -141,12 +145,12 @@ function LeadForm({ leadType }) {
             }
         };
     }, [watch, setValue]);
-    
+
     const staffOptions = staffData.map((item) => {
         return { value: item.id, label: item.name };
     });
-    
-      
+
+
     return (
         <>
             <div className={`sectionDiv ${styles.multiStepFormGrid}`}>
@@ -170,6 +174,7 @@ function LeadForm({ leadType }) {
                         label="Agent"
                         required={true}
                         isMulti={true}
+                        isDisabled={!hasPermission("assign_leads")}
                     />
                 </div>
             </div>
@@ -212,7 +217,7 @@ function LeadForm({ leadType }) {
                         )} */}
 
                         {showPopover && activePopover === 'area' && (
-                            <div 
+                            <div
                                 onMouseEnter={() => handleShowPopover('area')}
                                 onMouseLeave={handleHidePopover}
                                 style={{
@@ -463,7 +468,7 @@ function LeadForm({ leadType }) {
                         options={SOURCE_OPTIONS}
                         label="Source of Lead"
                     />
-                    
+
                     {/* <div style={{ position: 'relative' }}>
                         <div className={styles.inputGroup}>
                             <FormInputPropertySearch
@@ -543,7 +548,7 @@ function LeadForm({ leadType }) {
                             </div>
                         )}
                     </div> */}
-{/*                     
+                    {/*                     
                     <div style={{ position: 'relative' }}>
                         <div className={styles.inputGroup}>
                             <label className={styles.label}>Preferred Developers</label>
@@ -622,7 +627,7 @@ function LeadForm({ leadType }) {
                             </div>
                         )}
                     </div> */}
-                    
+
                     {/* <div style={{ position: 'relative' }}>
                         <div className={styles.inputGroup}>
                             <label className={styles.label}>Preferred Project</label>
